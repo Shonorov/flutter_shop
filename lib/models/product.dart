@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 class Product {
   final String id;
   final String title;
