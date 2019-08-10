@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_shop/providers/cart.dart';
 import 'package:flutter_shop/widgets/badge.dart';
 import 'package:flutter_shop/widgets/products_grid.dart';
+import 'package:flutter_shop/widgets/app_drawer.dart';
 
 enum FilterOptions { Favorites, All }
 
@@ -60,6 +61,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           ),
         ],
       ),
+      drawer: AppDrawer(),
       body: ProductsGrid(_showOnlyFavorites),
     );
   }
