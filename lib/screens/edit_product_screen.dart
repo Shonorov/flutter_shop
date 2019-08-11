@@ -40,6 +40,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   void _updateImageUrl() {
     if (!_imageUrlFocusNode.hasFocus) {
+      if ((_imageUrlController.text.isEmpty) ||
+          (!_imageUrlController.text.startsWith('http') &&
+              !_imageUrlController.text.startsWith('https')) ||
+          (!_imageUrlController.text.contains('png') &&
+              !_imageUrlController.text.contains('jpeg') &&
+              !_imageUrlController.text.contains('jpg'))) {
+        return;
+      }
       setState(() {});
     }
   }
@@ -100,6 +108,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 onFieldSubmitted: (value) {
                   FocusScope.of(context).requestFocus(_descriptionFocusNode);
                 },
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Field is mandatory!';
+                  }
+                  if (double.tryParse(value) == null) {
+                    return 'Incorrect number!';
+                  }
+                  if (double.tryParse(value) <= 0) {
+                    return 'Enter positive number!';
+                  }
+                  return null;
+                },
                 onSaved: (value) {
                   _editedProduct = Product(
                     id: null,
@@ -115,6 +135,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 maxLines: 3,
                 keyboardType: TextInputType.multiline,
                 focusNode: _descriptionFocusNode,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Field is mandatory!';
+                  }
+                  if (value.length < 10) {
+                    return 'Description is less then 10 symbols!';
+                  }
+                  return null;
+                },
                 onSaved: (value) {
                   _editedProduct = Product(
                     id: null,
@@ -157,6 +186,21 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       focusNode: _imageUrlFocusNode,
                       onFieldSubmitted: (value) {
                         _saveForm();
+                      },
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Field is mandatory!';
+                        }
+                        if (!value.startsWith('http') &&
+                            !value.startsWith('https')) {
+                          return 'Invalid ULR! Should start with http/https.';
+                        }
+                        if (!value.contains('png') &&
+                            !value.contains('jpeg') &&
+                            !value.contains('jpg')) {
+                          return 'Url is not an image!';
+                        }
+                        return null;
                       },
                       onSaved: (value) {
                         _editedProduct = Product(
