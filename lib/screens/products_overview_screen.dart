@@ -17,10 +17,20 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _showOnlyFavorites = false;
+  var _isLoading = false;
 
   @override
   void initState() {
-    Provider.of<Products>(context, listen: false).fetchAndSetProducts(); //Will work with listen: false
+    setState(() {
+      _isLoading = true;
+    });
+    Provider.of<Products>(context, listen: false)
+        .fetchAndSetProducts()
+        .then((_) {
+      setState(() {
+        _isLoading = false;
+      });
+    }); //Will work with listen: false
     super.initState();
   }
 
@@ -62,15 +72,18 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
             ),
             child: IconButton(
               icon: Icon(Icons.shopping_cart),
-              onPressed: () => {
-                Navigator.of(context).pushNamed(CartScreen.routeName)
-              },
+              onPressed: () =>
+                  {Navigator.of(context).pushNamed(CartScreen.routeName)},
             ),
           ),
         ],
       ),
       drawer: AppDrawer(),
-      body: ProductsGrid(_showOnlyFavorites),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ProductsGrid(_showOnlyFavorites),
     );
   }
 }
