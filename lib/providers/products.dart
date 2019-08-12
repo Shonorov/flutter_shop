@@ -95,7 +95,20 @@ class Products with ChangeNotifier {
     }
   }
 
-  void deleteProduct(String id) {
+  void deleteProduct(String id) {  //Optimistic update example
+    final url = 'https://mshonorov.firebaseio.com/products/$id.json';
+    final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
+    var existingProduct = _items[existingProductIndex];
+    _items.removeAt(existingProductIndex);
+    http.delete(url).then((response) {
+      if (response.statusCode >= 400) {
+
+      }
+      existingProduct = null;
+    }).catchError((_) {
+      _items.insert(existingProductIndex, existingProduct);
+      notifyListeners();
+    });
     _items.removeWhere((prod) => prod.id == id);
     notifyListeners();
   }
