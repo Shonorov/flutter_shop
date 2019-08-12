@@ -39,6 +39,15 @@ class Products with ChangeNotifier {
     ),
   ];
 
+  Future<void> fetchAndSetProducts() async {
+    const url = 'https://mshonorov.firebaseio.com/products.json';
+    try {
+      final response = await http.get(url);
+    } catch (e) {
+      throw(e);
+    }
+  }
+
   List<Product> get items {
     return [..._items];
   }
