@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_shop/models/http_exception.dart';
 import 'package:flutter_shop/providers/auth.dart';
 import 'package:provider/provider.dart';
 
@@ -102,6 +103,21 @@ class _AuthCardState extends State<AuthCard> {
   var _isLoading = false;
   final _passwordController = TextEditingController();
 
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('An Error occured!'),
+        content: Text(message),
+        actions: <Widget>[
+          FlatButton(child: Text('Ok'), onPressed: () {
+            Navigator.of(ctx).pop();
+          },)
+        ],
+      ),
+    );
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState.validate()) {
       // Invalid!
@@ -111,17 +127,37 @@ class _AuthCardState extends State<AuthCard> {
     setState(() {
       _isLoading = true;
     });
-    if (_authMode == AuthMode.Login) {
-      await Provider.of<Auth>(context, listen: false).login(
-        _authData['email'],
-        _authData['password'],
-      );
-    } else {
-      await Provider.of<Auth>(context, listen: false).signUp(
-        _authData['email'],
-        _authData['password'],
-      );
+    try {
+      if (_authMode == AuthMode.Login) {
+        await Provider.of<Auth>(context, listen: false).login(
+          _authData['email'],
+          _authData['password'],
+        );
+      } else {
+        await Provider.of<Auth>(context, listen: false).signUp(
+          _authData['email'],
+          _authData['password'],
+        );
+      }
+    } on HttpException catch (e) {
+      var errorMessage = 'Authentication failed.';
+      if (e.toString().contains('EMAIL_EXISTS')) {
+        errorMessage = 'Email already exists';
+      } else if (e.toString().contains('INVALID_EMAIL')) {
+        errorMessage = 'Email is invalid!';
+      } else if (e.toString().contains('WEAK_PASSWORD')) {
+        errorMessage = 'Password is less than 6 characters!';
+      } else if (e.toString().contains('EMAIL_NOT_FOUND')) {
+        errorMessage = 'Email does not exist!';
+      } else if (e.toString().contains('INVALID_PASSWORD')) {
+        errorMessage = 'Password is invalid!';
+      }
+      _showErrorDialog(errorMessage);
+    } catch (e) {
+      const errorMessage = 'Authentication failed. Please try again!';
+      _showErrorDialog(errorMessage);
     }
+
     setState(() {
       _isLoading = false;
     });
