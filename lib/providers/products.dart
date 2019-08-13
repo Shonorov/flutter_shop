@@ -11,8 +11,9 @@ class Products with ChangeNotifier {
 
   Products(this.authToken, this.userId, this._items);
 
-  Future<void> fetchAndSetProducts() async {
-    var url = 'https://mshonorov.firebaseio.com/products.json?auth=$authToken';
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    final filterString = filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
+    var url = 'https://mshonorov.firebaseio.com/products.json?$filterString&auth=$authToken';
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -63,6 +64,7 @@ class Products with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
+          'creatorId': userId,
         }),
       );
       final newProduct = Product(
