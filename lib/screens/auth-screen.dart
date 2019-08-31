@@ -112,7 +112,7 @@ class _AuthCardState extends State<AuthCard>
     _controller = AnimationController(
       vsync: this,
       duration: Duration(
-        milliseconds: 500,
+        milliseconds: 300,
       ),
     );
     _heightAnimation = Tween<Size>(
@@ -221,7 +221,7 @@ class _AuthCardState extends State<AuthCard>
       child: Container(
         height: _heightAnimation.value.height,
         constraints:
-            BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 320 : 260),
+            BoxConstraints(minHeight: _heightAnimation.value.height),
         width: deviceSize.width * 0.75,
         padding: EdgeInsets.all(16.0),
         child: Form(
