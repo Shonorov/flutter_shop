@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as prefix0;
+import 'package:flutter_shop/helpers/custom_route.dart';
 import 'package:flutter_shop/providers/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_shop/screens/orders_screen.dart';
+import 'package:flutter_shop/helpers/custom_route.dart';
 import 'package:flutter_shop/screens/user_products_screen.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -27,8 +30,11 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.payment),
             title: Text('Orders'),
             onTap: () {
-              Navigator.of(context)
-                  .pushReplacementNamed(OrdersScreen.routeName);
+              Navigator.of(context).pushReplacement(
+                CustomRoute(
+                  builder: (ctx) => OrdersScreen(),
+                ),
+              );
             },
           ),
           Divider(),
@@ -36,7 +42,7 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.edit),
             title: Text('Manage products'),
             onTap: () {
-              Navigator.of(context)
+              Navigator.of(context)         //Custom navigation animation
                   .pushReplacementNamed(UserProductsScreen.routeName);
             },
           ),
@@ -45,7 +51,7 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
             onTap: () {
-              Navigator.of(context).pop();        //Close drawer
+              Navigator.of(context).pop(); //Close drawer
               Navigator.of(context).pushReplacementNamed('/');
               Provider.of<Auth>(context, listen: false).logout();
             },
